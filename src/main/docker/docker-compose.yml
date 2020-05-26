@@ -1,0 +1,40 @@
+version: '2'
+services:
+  postgres:
+    image: postgres:11.7
+    environment:
+      POSTGRES_USER: karate_quarkus_demo
+      POSTGRES_PASSWORD: karate_quarkus_demo
+      POSTGRES_DB: karate_quarkus_demo
+    ports:
+    - 5432:5432
+    volumes:
+    - "./scripts/add-keycloak-db.sh:/docker-entrypoint-initdb.d/add-keycloak-db.sh"
+
+  keycloak:
+    image: jboss/keycloak:9.0.3
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      KEYCLOAK_IMPORT: "/tmp/karate-quarkus-demo-realm.json"
+      DB_USER: keycloak
+      DB_PASSWORD: keycloak
+      DB_VENDOR: postgres
+      DB_ADDR: postgres
+    ports:
+    - 8180:8080
+    volumes:
+      - "./keycloak/karate-quarkus-demo-realm.json:/tmp/karate-quarkus-demo-realm.json"
+    depends_on:
+      - postgres
+
+  mongo:
+    image: library/mongo:4.2.5
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: karate_quarkus_demo
+      MONGO_INITDB_ROOT_PASSWORD: karate_quarkus_demo
+      MONGO_INITDB_DATABASE: karate_quarkus_demo
+    volumes:
+      - ./scripts/init-mongo-database.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
