@@ -44,3 +44,20 @@ You can run Karate Tests with the following command :
 ```
 mvn clean test -DargLine="-Dkarate.env=local" -Dtest=FeatureRunner 
 ```
+
+## In summary, to run this example
+
+1 - Initialize the dev stack (mongo, keycloak, postgres)
+```
+docker-compose -f src/main/docker/docker-compose.yml up -d
+```
+
+2 - Compile / run the application locally
+```
+mvn clean compile quarkus:dev
+```
+
+3 - Run NRT locally
+```
+mvn clean test -DargLine=“-Dkarate.env=local” -Dtest=FeatureRunner
+```
